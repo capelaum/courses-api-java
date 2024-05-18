@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,7 @@ import br.com.capelaum.courses.entities.CourseEntity;
 import br.com.capelaum.courses.exceptions.CourseNotFoundException;
 import br.com.capelaum.courses.exceptions.InvalidCourseStatusException;
 import br.com.capelaum.courses.services.CreateCourseService;
+import br.com.capelaum.courses.services.DeleteCourseService;
 import br.com.capelaum.courses.services.ListCoursesService;
 import br.com.capelaum.courses.services.UpdateCourseService;
 import jakarta.validation.Valid;
@@ -36,6 +38,9 @@ public class CourseController {
 
     @Autowired
     private UpdateCourseService updateCourseService;
+
+    @Autowired
+    private DeleteCourseService deleteCourseService;
 
     @PostMapping("/")
     public ResponseEntity<Object> create(@Valid @RequestBody CourseEntity courseEntity) {
@@ -73,6 +78,20 @@ public class CourseController {
             return ResponseEntity.ok(updatedCourse);
         } catch (CourseNotFoundException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Ocorreu um erro inesperado");
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> delete(@PathVariable UUID id) {
+        try {
+            deleteCourseService.execute(id);
+            return ResponseEntity.noContent().build();
+        } catch (CourseNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)

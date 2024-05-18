@@ -23,7 +23,7 @@ public class ToggleCourseActiveService {
         var updatedStatus = course.getStatus() == CourseStatusEnum.ACTIVE ? CourseStatusEnum.INACTIVE
                 : CourseStatusEnum.ACTIVE;
 
-        course.setStatus(updatedStatus); // Toggle the active status
+        course.setStatus(updatedStatus);
 
         return courseRepository.save(course);
     }

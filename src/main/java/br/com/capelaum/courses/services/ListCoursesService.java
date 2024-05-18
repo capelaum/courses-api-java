@@ -18,12 +18,16 @@ public class ListCoursesService {
     public List<CourseEntity> execute(String name, String category) {
         if (StringUtils.hasText(name) && StringUtils.hasText(category)) {
             return courseRepository.findByNameContainingAndCategoryContaining(name, category);
-        } else if (StringUtils.hasText(name)) {
-            return courseRepository.findByNameContaining(name);
-        } else if (StringUtils.hasText(category)) {
-            return courseRepository.findByCategoryContaining(category);
-        } else {
-            return courseRepository.findAll();
         }
+
+        if (StringUtils.hasText(name)) {
+            return courseRepository.findByNameContaining(name);
+        }
+
+        if (StringUtils.hasText(category)) {
+            return courseRepository.findByCategoryContaining(category);
+        }
+
+        return courseRepository.findAll();
     }
 }

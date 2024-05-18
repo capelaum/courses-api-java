@@ -1,6 +1,5 @@
 package br.com.capelaum.courses.services;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +18,8 @@ public class UpdateCourseService {
     private CourseRepository courseRepository;
 
     public CourseEntity execute(UUID id, UpdateCourseRequestDTO updateRequestDTO) {
-        Optional<CourseEntity> courseOptional = courseRepository.findById(id);
-
-        if (!courseOptional.isPresent()) {
-            throw new CourseNotFoundException();
-        }
-
-        CourseEntity course = courseOptional.get();
+        var course = courseRepository.findById(id)
+                .orElseThrow(() -> new CourseNotFoundException());
 
         if (StringUtils.hasText(updateRequestDTO.getName())) {
             course.setName(updateRequestDTO.getName());

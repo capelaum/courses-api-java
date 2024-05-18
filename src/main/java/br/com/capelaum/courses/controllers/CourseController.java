@@ -1,19 +1,26 @@
 package br.com.capelaum.courses.controllers;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.capelaum.courses.dto.UpdateCourseRequestDTO;
 import br.com.capelaum.courses.entities.CourseEntity;
+import br.com.capelaum.courses.exceptions.CourseNotFoundException;
 import br.com.capelaum.courses.exceptions.InvalidCourseStatusException;
 import br.com.capelaum.courses.services.CreateCourseService;
 import br.com.capelaum.courses.services.ListCoursesService;
+import br.com.capelaum.courses.services.UpdateCourseService;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 
@@ -26,6 +33,9 @@ public class CourseController {
 
     @Autowired
     private ListCoursesService listCoursesService;
+
+    @Autowired
+    private UpdateCourseService updateCourseService;
 
     @PostMapping("/")
     public ResponseEntity<Object> create(@Valid @RequestBody CourseEntity courseEntity) {
@@ -49,6 +59,20 @@ public class CourseController {
         try {
             var courses = this.listCoursesService.execute(name, category);
             return ResponseEntity.ok(courses);
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Ocorreu um erro inesperado");
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> update(@PathVariable UUID id, @RequestBody UpdateCourseRequestDTO updateRequestDTO) {
+        try {
+            CourseEntity updatedCourse = this.updateCourseService.execute(id, updateRequestDTO);
+            return ResponseEntity.ok(updatedCourse);
+        } catch (CourseNotFoundException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)

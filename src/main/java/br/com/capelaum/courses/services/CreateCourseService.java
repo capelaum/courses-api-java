@@ -13,7 +13,7 @@ public class CreateCourseService {
     CourseRepository courseRepository;
 
     public CourseEntity execute(CourseEntity courseEntity) {
-        return this.courseRepository.save(courseEntity);
+        return courseRepository.save(courseEntity);
     }
 
 }

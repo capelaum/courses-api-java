@@ -18,8 +18,7 @@ public class UpdateCourseService {
     private CourseRepository courseRepository;
 
     public CourseEntity execute(UUID id, UpdateCourseRequestDTO updateRequestDTO) {
-        var course = courseRepository.findById(id)
-                .orElseThrow(() -> new CourseNotFoundException());
+        var course = courseRepository.findById(id).orElseThrow(CourseNotFoundException::new);
 
         if (StringUtils.hasText(updateRequestDTO.getName())) {
             course.setName(updateRequestDTO.getName());

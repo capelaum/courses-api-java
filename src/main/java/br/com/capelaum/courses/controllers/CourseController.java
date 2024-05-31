@@ -50,7 +50,7 @@ public class CourseController {
     @PostMapping("/")
     public ResponseEntity<Object> create(@Valid @RequestBody CourseEntity courseEntity) {
         try {
-            var createdCourse = this.createCourseService.execute(courseEntity);
+            var createdCourse = createCourseService.execute(courseEntity);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdCourse);
         } catch (InvalidCourseStatusException | ValidationException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -67,7 +67,7 @@ public class CourseController {
             @RequestParam(required = false) String category) {
 
         try {
-            var courses = this.listCoursesService.execute(name, category);
+            var courses = listCoursesService.execute(name, category);
             return ResponseEntity.ok(courses);
         } catch (Exception e) {
             return ResponseEntity
@@ -79,7 +79,7 @@ public class CourseController {
     @PutMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable UUID id, @RequestBody UpdateCourseRequestDTO updateRequestDTO) {
         try {
-            CourseEntity updatedCourse = this.updateCourseService.execute(id, updateRequestDTO);
+            CourseEntity updatedCourse = updateCourseService.execute(id, updateRequestDTO);
             return ResponseEntity.ok(updatedCourse);
         } catch (CourseNotFoundException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
